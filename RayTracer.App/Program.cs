@@ -1,1 +1,24 @@
-﻿
+﻿namespace RayTracer.App;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Image image = new Image(1920, 1080);
+        for (int i = 0; i < image.Width; i++)
+        {
+            for (int j = 0; j < image.Height; j++)
+            {
+                float r = (float) i / image.Width;
+                float g = (float) j / image.Height;
+                float b = MathF.Sin(2 * MathF.PI * ((float) i * j / image.Width / image.Height));
+                int rbyte = (int)(255.999 * r);
+                int gbyte = (int)(255.999 * g);
+                int bbyte = (int)(255.999 * b);
+                image[i, j] = new Vec3(rbyte, gbyte, bbyte);
+            }
+        }
+
+        Console.WriteLine(image.ToPpm());
+    }
+}
