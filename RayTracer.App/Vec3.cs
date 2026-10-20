@@ -12,7 +12,12 @@ public readonly struct Vec3
         Y = y;
         Z = z;
     }
-
+    public Vec3(Vec3 vec3)
+    {
+        X = vec3.X;
+        Y = vec3.Y;
+        Z = vec3.Z;
+    }
     public override string ToString() => $"{X} {Y} {Z}";
     public float LengthSquared => X * X + Y * Y + Z * Z;
     public float Length => MathF.Sqrt(LengthSquared);
