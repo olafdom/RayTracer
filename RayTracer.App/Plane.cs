@@ -5,7 +5,7 @@ public class Plane : IHittable
     Vec3 Normal;
     Vec3 Position;
 
-    public Plane(Vec3 normal, Vec3 position)
+    public Plane(Vec3 position, Vec3 normal)
     {
         Normal = normal.Normalize();
         Position = position;

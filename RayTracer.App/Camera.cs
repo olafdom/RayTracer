@@ -68,8 +68,8 @@ public class Camera
         float viewportHeight = 2.0f * MathF.Tan(FovInRadians / 2) * DistanceToViewport;
         float viewportWidth = viewportHeight * _aspectRatio;
         Vec3 vForward = (_position - _target).Normalize();
-        Vec3 vRight = Vec3.CrossProduct(vForward, new Vec3(0, 1, 0)).Normalize();
-        Vec3 vUp = Vec3.CrossProduct(vRight, vForward).Normalize();
+        Vec3 vRight = Vec3.CrossProduct(new Vec3(0, 1, 0), vForward).Normalize();
+        Vec3 vUp = Vec3.CrossProduct(vForward, vRight).Normalize();
         Vec3 viewportY = viewportHeight * -vUp;
         Vec3 viewportX = viewportWidth * vRight;
         _pixelDy = viewportY / _imageHeight;
@@ -90,7 +90,12 @@ public class Camera
                 Ray ray = new Ray(Position, rayDirection);
                 if (world.Hit(ray, 0.001f, float.PositiveInfinity, out HitInfo hitInfo))
                 {
-                    img[x, y] = new Vec3(1, 0, 0);
+                    float minDistance = 1.0f;
+                    float maxDistance = 3.5f;
+                    float distance = (hitInfo.Position - Position).Length;
+                    float ratio = (distance - minDistance) / (maxDistance - minDistance);
+                    float intensity = Math.Clamp(1f - ratio, 0f, 1f) * 255f;
+                    img[x, y] = new Vec3((int)intensity, 0, 0);
                 }
                 else
                 {
