@@ -7,7 +7,7 @@ public struct HitInfo
     public float T; //t parameter of a Ray
     public bool FrontFace; //Ray hits from outside - true, otherwise - false 
 
-    private void SetFaceNormal(Ray r, Vec3 OutwardNormal)
+    public void SetFaceNormal(Ray r, Vec3 OutwardNormal)
     {
         if (Vec3.DotProduct(r.Direction, OutwardNormal) <= 0)
         {
