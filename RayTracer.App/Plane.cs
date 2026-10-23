@@ -4,11 +4,13 @@ public class Plane : IHittable
 {
     Vec3 Normal;
     Vec3 Position;
+    public Material Material { get; set; }
 
-    public Plane(Vec3 position, Vec3 normal)
+    public Plane(Vec3 position, Vec3 normal, Material material)
     {
         Normal = normal.Normalize();
         Position = position;
+        Material = material;
     }
 
     public bool Hit(Ray ray, float tMin, float tMax, out HitInfo hitInfo)
@@ -22,6 +24,7 @@ public class Plane : IHittable
 
         float t = Vec3.DotProduct(Position - ray.Origin, Normal) / denominator;
         if (t < tMin || t > tMax) return false;
+        hitInfo.Material = Material;
         hitInfo.T = t;
         hitInfo.SetFaceNormal(ray, Normal);
         hitInfo.Position = ray.At(t);

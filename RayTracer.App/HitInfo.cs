@@ -2,6 +2,7 @@
 
 public struct HitInfo
 {
+    public Material Material;
     public Vec3 Position;
     public Vec3 Normal;
     public float T; //t parameter of a Ray

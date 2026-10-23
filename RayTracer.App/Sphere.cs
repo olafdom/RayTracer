@@ -4,11 +4,13 @@ public class Sphere : IHittable
 {
     public Vec3 Center;
     public float Radius;
+    public Material Material { get; set; }
 
-    public Sphere(Vec3 center, float radius)
+    public Sphere(Vec3 center, float radius, Material material)
     {
         Center = center;
         Radius = radius;
+        Material = material;
     }
 
     public bool Hit(Ray ray, float tMin, float tMax, out HitInfo hitInfo)
@@ -31,6 +33,7 @@ public class Sphere : IHittable
                 return false;
             }
         }
+        hitInfo.Material = Material;
         hitInfo.T = root;
         hitInfo.Position = ray.At(hitInfo.T);
         Vec3 outwardNormal = (hitInfo.Position - Center) / Radius;

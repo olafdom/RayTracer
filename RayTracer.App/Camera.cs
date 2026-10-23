@@ -2,6 +2,7 @@
 
 public class Camera
 {
+    public int MaxDepth { get; set; } = 50;
     private float _aspectRatio = (16.0f / 9.0f);
     private int _imageWidth = 1280;
     private int _imageHeight; //Will be calculated in Recalculate()
@@ -78,6 +79,25 @@ public class Camera
         _viewportCorner = viewportUpperLeft + 0.5f * (_pixelDy + _pixelDx);
     }
 
+    private Vec3 RayColor(Ray ray, int depth, IHittable world)
+    {
+        if (depth <= 0)
+        {
+            return new Vec3(0, 0, 0);
+        }
+        if (!world.Hit(ray, 0.001f, float.PositiveInfinity, out HitInfo hitInfo))
+        {
+            return new Vec3(0, 0, 0);
+        }
+        Vec3 emitted = hitInfo.Material.Emit(); 
+        if (hitInfo.Material.Scatter(ray, ref hitInfo, out Vec3 attenuation, out Ray scattered))
+        {
+            Vec3 scatteredColor = RayColor(scattered, depth - 1, world);
+            return emitted + (attenuation * scatteredColor);
+        }
+        return emitted;
+    }
+
     public Image Render(IHittable world)
     {
         Image img = new Image(_imageWidth, _imageHeight);
@@ -88,19 +108,7 @@ public class Camera
                 Vec3 pixelCenter = _viewportCorner + (y * _pixelDy) + (x * _pixelDx);
                 Vec3 rayDirection = pixelCenter - Position;
                 Ray ray = new Ray(Position, rayDirection);
-                if (world.Hit(ray, 0.001f, float.PositiveInfinity, out HitInfo hitInfo))
-                {
-                    float minDistance = 1.0f;
-                    float maxDistance = 3.5f;
-                    float distance = (hitInfo.Position - Position).Length;
-                    float ratio = (distance - minDistance) / (maxDistance - minDistance);
-                    float intensity = Math.Clamp(1f - ratio, 0f, 1f) * 255f;
-                    img[x, y] = new Vec3((int)intensity, 0, 0);
-                }
-                else
-                {
-                    img[x, y] = new Vec3(0, 0, 0); 
-                }
+                img[x, y] = RayColor(ray, MaxDepth, world) * 255f; 
             }
         }
         return img;
