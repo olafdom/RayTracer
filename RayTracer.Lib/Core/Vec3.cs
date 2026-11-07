@@ -84,8 +84,7 @@ public readonly struct Vec3
         }
     }
 
-    public static Vec3 RandomUnitVector()
-    {
-        return RandomInUnitSphere().Normalize();
-    }
+    public static Vec3 RandomUnitVector() => RandomInUnitSphere().Normalize();
+
+    public static Vec3 Reflect(Vec3 a, Vec3 b) => a - 2 * DotProduct(a, b) * b;    
 }

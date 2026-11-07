@@ -24,8 +24,7 @@ public class Renderer
                     colorSum += RayColor(in ray, MaxDepth, world);
                 }
 
-                img[x, y] = (colorSum / camera.SamplesPerPixel) * 255f;
-                //img[x, y] = RayColor(camera.GetRay(x, y), MaxDepth, world) * 255f;
+                img[x, y] = (colorSum / camera.SamplesPerPixel);
             }
         });
         return img;
