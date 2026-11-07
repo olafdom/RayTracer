@@ -1,17 +1,27 @@
-﻿namespace RayTracer.App;
+﻿using RayTracer.Lib.Core;
+
+namespace RayTracer.Lib.Rendering;
 
 public class Camera
 {
     public int MaxDepth { get; set; } = 50;
     private float _aspectRatio = (16.0f / 9.0f);
     private int _imageWidth = 1280;
-    private int _imageHeight; //Will be calculated in Recalculate()
+    private int _imageHeight; //Calculated in Recalculate()
     private Vec3 _position = new Vec3(0, 0, 0);
     private Vec3 _target = new Vec3(0, 0, -1);
     private float _fov = 90.0f;
-    private Vec3 _pixelDy; //Will be calculated in Recalculate()
-    private Vec3 _pixelDx; //Will be calculated in Recalculate()
-    private Vec3 _viewportCorner; //Will be calculated in Recalculate()
+    private Vec3 _pixelDy; //Calculated in Recalculate()
+    private Vec3 _pixelDx; //Calculated in Recalculate()
+    private Vec3 _viewportCorner; //Calculated in Recalculate()
+    
+    public Camera(Vec3 position, float fov, float aspectRatio)
+    {
+        Position = position;
+        Fov = fov;
+        AspectRatio = aspectRatio;
+        Recalculate();
+    }
 
     public float AspectRatio
     {
@@ -22,6 +32,7 @@ public class Camera
             Recalculate();
         }
     }
+    
     public int ImageWidth
     {
         get => _imageWidth;
@@ -31,6 +42,17 @@ public class Camera
             Recalculate();
         }
     }
+    
+    public int ImageHeight
+    {
+        get => _imageHeight;
+        set
+        {
+            _imageHeight = value;
+            Recalculate();
+        }
+    }
+    
     public Vec3 Position
     {
         get => _position;
@@ -40,6 +62,7 @@ public class Camera
             Recalculate();
         }
     }
+    
     public Vec3 Target
     {
         get => _target;
@@ -66,59 +89,29 @@ public class Camera
     private void Recalculate()
     {
         _imageHeight = (int)(ImageWidth / AspectRatio);
+        
         float viewportHeight = 2.0f * MathF.Tan(FovInRadians / 2) * DistanceToViewport;
         float viewportWidth = viewportHeight * _aspectRatio;
+        
         Vec3 vForward = (_position - _target).Normalize();
         Vec3 vRight = Vec3.CrossProduct(new Vec3(0, 1, 0), vForward).Normalize();
         Vec3 vUp = Vec3.CrossProduct(vForward, vRight).Normalize();
+        
         Vec3 viewportY = viewportHeight * -vUp;
         Vec3 viewportX = viewportWidth * vRight;
+        
         _pixelDy = viewportY / _imageHeight;
         _pixelDx = viewportX / _imageWidth;
+        
         Vec3 viewportUpperLeft = _position - (DistanceToViewport * vForward) - viewportY / 2.0f - viewportX / 2.0f;
+        
         _viewportCorner = viewportUpperLeft + 0.5f * (_pixelDy + _pixelDx);
     }
-
-    private Vec3 RayColor(Ray ray, int depth, IHittable world)
+    
+    public Ray GetRay(int x, int y)
     {
-        if (depth <= 0)
-        {
-            return new Vec3(0, 0, 0);
-        }
-        if (!world.Hit(ray, 0.001f, float.PositiveInfinity, out HitInfo hitInfo))
-        {
-            return new Vec3(0, 0, 0);
-        }
-        Vec3 emitted = hitInfo.Material.Emit(); 
-        if (hitInfo.Material.Scatter(ray, ref hitInfo, out Vec3 attenuation, out Ray scattered))
-        {
-            Vec3 scatteredColor = RayColor(scattered, depth - 1, world);
-            return emitted + (attenuation * scatteredColor);
-        }
-        return emitted;
-    }
-
-    public Image Render(IHittable world)
-    {
-        Image img = new Image(_imageWidth, _imageHeight);
-        for (int y = 0; y < _imageHeight; ++y)
-        {
-            for (int x = 0; x < _imageWidth; ++x)
-            {
-                Vec3 pixelCenter = _viewportCorner + (y * _pixelDy) + (x * _pixelDx);
-                Vec3 rayDirection = pixelCenter - Position;
-                Ray ray = new Ray(Position, rayDirection);
-                img[x, y] = RayColor(ray, MaxDepth, world) * 255f; 
-            }
-        }
-        return img;
-    }
-
-    public Camera(Vec3 position, float fov, float aspectRatio)
-    {
-        Position = position;
-        Fov = fov;
-        AspectRatio = aspectRatio;
-        Recalculate();
+        Vec3 pixelCenter = _viewportCorner + (y * _pixelDy) + (x * _pixelDx);
+        Vec3 rayDirection = pixelCenter - Position;
+        return new Ray(Position, rayDirection);
     }
 }

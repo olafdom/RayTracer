@@ -1,22 +1,24 @@
-﻿namespace RayTracer.App;
+﻿using RayTracer.Lib.Core;
+using RayTracer.Lib.Objects;
+
+namespace RayTracer.Lib.Rendering;
 
 public class Scene : IHittable
 {
-    public List<IHittable> Objects { get; } = new List<IHittable>();
+    public List<IHittable> Objects { get; } = new();
     public void AddObject(IHittable hittable) => Objects.Add(hittable);
     public void RemoveObject(IHittable hittable) => Objects.Remove(hittable);
 
     //Function returning HitInfo about nearest object that was hit by a given Ray
-    public bool Hit(Ray ray, float tMin, float tMax, out HitInfo hitInfo)
+    public bool Hit(in Ray ray, float tMin, float tMax, out HitInfo hitInfo)
     {
-        HitInfo tempHitInfo;
         bool hitAnything = false;
         float closestSoFar = tMax;
-        hitInfo = new HitInfo();
+        hitInfo = default;
 
         foreach (var obj in Objects)
         {
-            if (obj.Hit(ray, tMin, closestSoFar, out tempHitInfo))
+            if (obj.Hit(ray, tMin, closestSoFar, out HitInfo tempHitInfo))
             {
                 hitAnything = true;
                 closestSoFar = tempHitInfo.T;

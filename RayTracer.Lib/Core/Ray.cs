@@ -1,9 +1,9 @@
-﻿namespace RayTracer.App;
+﻿namespace RayTracer.Lib.Core;
 
 public readonly struct Ray
 {
-    public readonly Vec3 Origin;
-    public readonly Vec3 Direction;
+    public Vec3 Origin { get; }
+    public Vec3 Direction { get; }
 
     public Ray(Vec3 origin, Vec3 direction)
     {
@@ -11,10 +11,7 @@ public readonly struct Ray
         Direction = direction;
     }
 
-    public Vec3 At(float t)
-    {
-        return new Vec3(Origin + t * Direction);
-    }
+    public Vec3 At(float t) => new Vec3(Origin + t * Direction);
     
     public override string ToString() => $"{Origin} {Direction}";
 }

@@ -1,4 +1,7 @@
-﻿namespace RayTracer.App;
+﻿using RayTracer.Lib.Core;
+using RayTracer.Lib.Objects;
+
+namespace RayTracer.Lib.Materials;
 
 public abstract class Material
 {

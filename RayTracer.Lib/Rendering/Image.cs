@@ -1,11 +1,13 @@
-﻿namespace RayTracer.App;
-using System.Text;
+﻿using System.Text;
+using RayTracer.Lib.Core;
+
+namespace RayTracer.Lib.Rendering;
 
 public class Image
 {
-    public int Width { get; private set; }
-    public int Height { get; private set; }
-    public Vec3[,] Pixels { get; private set; }
+    private int Width { get; }
+    private int Height { get; }
+    private Vec3[,] Pixels { get; }
 
     public Image(int width, int height)
     {
@@ -36,6 +38,7 @@ public class Image
             }
             sb.AppendLine();
         }
+        
         return sb.ToString();
     }
 }

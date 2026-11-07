@@ -1,12 +1,13 @@
-﻿using System.Drawing;
+﻿using RayTracer.Lib.Core;
+using RayTracer.Lib.Objects;
 
-namespace RayTracer.App;
+namespace RayTracer.Lib.Materials;
 
 public class EmissiveMaterial : Material
 {
-    private Vec3 Color;
+    public Vec3 Color { get; }
 
-    public EmissiveMaterial(Vec3 color)
+    public EmissiveMaterial(Vec3 color) 
     {
         Color = color;
     }
