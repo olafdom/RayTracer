@@ -5,7 +5,7 @@ namespace RayTracer.Lib.Rendering;
 public class Camera
 {
     public int MaxDepth { get; set; } = 50;
-    public int SamplesPerPixel { get; set; } = 100;
+    public int SamplesPerPixel { get; set; } = 10;
     private float _maxOffsetX = 0.5f;
     private float _maxOffsetY = 0.5f;
     private float _aspectRatio = (16.0f / 9.0f);

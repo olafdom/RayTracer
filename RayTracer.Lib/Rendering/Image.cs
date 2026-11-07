@@ -35,9 +35,9 @@ public class Image
             {
                 Vec3 color = Pixels[x, y];
                 
-                int r = Math.Clamp((int)color.X, 0, 255);
-                int g = Math.Clamp((int)color.Y, 0, 255);
-                int b = Math.Clamp((int)color.Z, 0, 255);
+                int r = Math.Clamp((int)(Math.Sqrt(color.X) * 255.0), 0, 255);
+                int g = Math.Clamp((int)(Math.Sqrt(color.Y) * 255.0), 0, 255);
+                int b = Math.Clamp((int)(Math.Sqrt(color.Z) * 255.0), 0, 255);
         
                 sb.Append($"{r} {g} {b}\t");
                 sb.Append("\t");

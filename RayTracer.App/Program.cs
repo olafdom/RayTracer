@@ -12,14 +12,16 @@ class Program
         Scene world = new Scene();
         world.AddObject(new Sphere(new (0, 0, 0), 1000.0f, new EmissiveMaterial(new (0.5f, 0.7f, 1.0f))));
         world.AddObject(new Sphere(new (0, 0, -1), 0.5f, new Lambertian(new (1, 0, 0)))); 
-        world.AddObject(new Sphere(new (-1.1f, 0, -1), 0.5f, new Lambertian(new (0, 0, 1)))); 
-        world.AddObject(new Sphere(new (1.1f, 0, -1), 0.5f, new Lambertian(new (1, 1, 0)))); 
+        world.AddObject(new Sphere(new (-1.1f, 0, -1), 0.5f, new Metal(new Vec3(0.8f, 0.6f, 0.2f)))); 
+        world.AddObject(new Sphere(new (1.1f, 0, -1), 0.5f, new Lambertian(new (0.851f, 0.231f, 0.859f)))); 
+        world.AddObject(new Sphere(new (0, 4, -8), 8f, new Lambertian(new (1f, 0.765f, 0.835f)))); 
         world.AddObject(new Plane(new (0, -0.5f, 0), new (0, 1, 0), new Lambertian(new (0.2f, 0.8f, 0.2f))));
-        //world.AddObject(new Plane(new Vec3(0, -0.5f, 0), new Vec3(0, 1, 0)));
 
-        Camera cam = new Camera(new Vec3(0, 0, 2f), 90.0f, 16.0f / 9.0f)
+        Camera cam = new Camera(new Vec3(-1.5f, 0, 2f), 90.0f, 16.0f / 9.0f)
         {
-            Target = new Vec3(0, 0, -1)
+            Fov = 90.0f,
+            SamplesPerPixel = 100,
+            Target = new Vec3(-0.3f, 0, -1.5f)
         };
 
         Renderer renderer = new Renderer
