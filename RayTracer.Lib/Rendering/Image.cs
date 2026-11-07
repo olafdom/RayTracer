@@ -33,7 +33,13 @@ public class Image
         {
             for (int x = 0; x < Width; ++x)
             {
-                sb.Append(Pixels[x, y]);
+                Vec3 color = Pixels[x, y];
+                
+                int r = Math.Clamp((int)color.X, 0, 255);
+                int g = Math.Clamp((int)color.Y, 0, 255);
+                int b = Math.Clamp((int)color.Z, 0, 255);
+        
+                sb.Append($"{r} {g} {b}\t");
                 sb.Append("\t");
             }
             sb.AppendLine();

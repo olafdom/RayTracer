@@ -5,6 +5,9 @@ namespace RayTracer.Lib.Rendering;
 public class Camera
 {
     public int MaxDepth { get; set; } = 50;
+    public int SamplesPerPixel { get; set; } = 100;
+    private float _maxOffsetX = 0.5f;
+    private float _maxOffsetY = 0.5f;
     private float _aspectRatio = (16.0f / 9.0f);
     private int _imageWidth = 1280;
     private int _imageHeight; //Calculated in Recalculate()
@@ -110,8 +113,14 @@ public class Camera
     
     public Ray GetRay(int x, int y)
     {
-        Vec3 pixelCenter = _viewportCorner + (y * _pixelDy) + (x * _pixelDx);
-        Vec3 rayDirection = pixelCenter - Position;
+        float offsetX = Random.Shared.NextSingle() - _maxOffsetX;
+        float offsetY = Random.Shared.NextSingle() - _maxOffsetY;
+        
+        //Vec3 pixelCenter = _viewportCorner + (y * _pixelDy) + (x * _pixelDx);
+        //Casting a ray with some random offset for antyaliasing:
+        Vec3 pixelCenterWithOffset = _viewportCorner + ((y + offsetY) * _pixelDy) + ((x + offsetX) * _pixelDx);
+        Vec3 rayDirection = pixelCenterWithOffset - Position;
+        
         return new Ray(Position, rayDirection);
     }
 }

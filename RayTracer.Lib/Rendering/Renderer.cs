@@ -1,5 +1,6 @@
 ﻿using RayTracer.Lib.Core;
 using RayTracer.Lib.Objects;
+using System.Threading.Tasks;
 
 namespace RayTracer.Lib.Rendering;
 
@@ -10,16 +11,23 @@ public class Renderer
     public Image Render(Camera camera, IHittable world)
     {
         Image img = new Image(camera.ImageWidth, camera.ImageHeight);
-        
-        for (int y = 0; y < camera.ImageHeight; ++y)
+
+        Parallel.For(0, camera.ImageHeight, y =>
         {
             for (int x = 0; x < camera.ImageWidth; ++x)
             {
-                Ray ray = camera.GetRay(x, y);
-                
-                img[x, y] = RayColor(ray, MaxDepth, world) * 255f; 
+                Vec3 colorSum = new Vec3(0, 0, 0);
+                for (int sample = 0; sample < camera.SamplesPerPixel; ++sample)
+                {
+                    Ray ray = camera.GetRay(x, y);
+
+                    colorSum += RayColor(in ray, MaxDepth, world);
+                }
+
+                img[x, y] = (colorSum / camera.SamplesPerPixel) * 255f;
+                //img[x, y] = RayColor(camera.GetRay(x, y), MaxDepth, world) * 255f;
             }
-        }
+        });
         return img;
     }
     
