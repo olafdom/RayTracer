@@ -65,4 +65,27 @@ public readonly struct Vec3
             a.X * b.Y - a.Y * b.X
         );
     }
+
+    public bool NearZero() => Math.Abs(X) < 1E-015f && Math.Abs(X) < 1E-15f && Math.Abs(X) < 1E-15f;
+
+    public static Vec3 RandomInUnitSphere()
+    {
+        float randX;
+        float randY;
+        float randZ;
+        while (true)
+        {
+            randX = Random.Shared.NextSingle() * 2.0f - 1.0f;
+            randY = Random.Shared.NextSingle() * 2.0f - 1.0f;
+            randZ = Random.Shared.NextSingle() * 2.0f - 1.0f;
+            Vec3 vec = new Vec3(randX, randY, randZ);
+            if (vec.LengthSquared < 1)
+                return vec;
+        }
+    }
+
+    public static Vec3 RandomUnitVector()
+    {
+        return RandomInUnitSphere().Normalize();
+    }
 }
