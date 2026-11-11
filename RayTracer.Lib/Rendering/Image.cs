@@ -7,16 +7,16 @@ public class Image
 {
     private int Width { get; }
     private int Height { get; }
-    private Vec3[,] Pixels { get; }
+    private Color[,] Pixels { get; }
 
     public Image(int width, int height)
     {
         Width = width;
         Height = height;
-        Pixels = new Vec3[width, height];
+        Pixels = new Color[width, height];
     }
 
-    public Vec3 this[int x, int y]
+    public Color this[int x, int y]
     {
         get => Pixels[x, y];
         set => Pixels[x, y] = value;
@@ -33,11 +33,11 @@ public class Image
         {
             for (int x = 0; x < Width; ++x)
             {
-                Vec3 color = Pixels[x, y];
+                Color color = Pixels[x, y];
                 
-                int r = Math.Clamp((int)(Math.Sqrt(color.X) * 255.0), 0, 255);
-                int g = Math.Clamp((int)(Math.Sqrt(color.Y) * 255.0), 0, 255);
-                int b = Math.Clamp((int)(Math.Sqrt(color.Z) * 255.0), 0, 255);
+                int r = Math.Clamp((int)(Math.Sqrt(color.R) * 255.0), 0, 255);
+                int g = Math.Clamp((int)(Math.Sqrt(color.G) * 255.0), 0, 255);
+                int b = Math.Clamp((int)(Math.Sqrt(color.B) * 255.0), 0, 255);
         
                 sb.Append($"{r} {g} {b}\t");
                 sb.Append("\t");

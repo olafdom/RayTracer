@@ -5,9 +5,9 @@ namespace RayTracer.Lib.Materials;
 
 public class EmissiveMaterial : Material
 {
-    public Vec3 Color { get; }
+    public Color Color { get; }
 
-    public EmissiveMaterial(Vec3 color) 
+    public EmissiveMaterial(Color color) 
     {
         Color = color;
     }
@@ -19,5 +19,5 @@ public class EmissiveMaterial : Material
         return false;
     }
 
-    public override Vec3 Emit() => Color;
+    public override Color Emit() => Color;
 }

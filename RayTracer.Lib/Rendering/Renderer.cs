@@ -16,7 +16,7 @@ public class Renderer
         {
             for (int x = 0; x < camera.ImageWidth; ++x)
             {
-                Vec3 colorSum = new Vec3(0, 0, 0);
+                Color colorSum = new Color(0, 0, 0);
                 for (int sample = 0; sample < camera.SamplesPerPixel; ++sample)
                 {
                     Ray ray = camera.GetRay(x, y);
@@ -30,19 +30,19 @@ public class Renderer
         return img;
     }
     
-    private static Vec3 RayColor(in Ray ray, int depth, IHittable world)
+    private static Color RayColor(in Ray ray, int depth, IHittable world)
     {
         if (depth <= 0)
-            return new Vec3(0, 0, 0);
+            return new Color(0, 0, 0);
         
         if (!world.Hit(in ray, 0.001f, float.PositiveInfinity, out HitInfo hitInfo))
-            return new Vec3(0, 0, 0);
+            return new Color(0, 0, 0);
         
-        Vec3 emitted = hitInfo.Material.Emit(); 
+        Color emitted = hitInfo.Material.Emit(); 
         
         if (hitInfo.Material.Scatter(in ray, ref hitInfo, out Vec3 attenuation, out Ray scattered))
         {
-            Vec3 scatteredColor = RayColor(scattered, depth - 1, world);
+            Color scatteredColor = RayColor(scattered, depth - 1, world);
             return emitted + (attenuation * scatteredColor);
         }
         
