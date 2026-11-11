@@ -35,9 +35,7 @@ public class Image
             {
                 Color color = Pixels[x, y];
                 
-                int r = Math.Clamp((int)(Math.Sqrt(color.R) * 255.0), 0, 255);
-                int g = Math.Clamp((int)(Math.Sqrt(color.G) * 255.0), 0, 255);
-                int b = Math.Clamp((int)(Math.Sqrt(color.B) * 255.0), 0, 255);
+                (byte r, byte g, byte b) = color.ToRgb255();
         
                 sb.Append($"{r} {g} {b}\t");
                 sb.Append("\t");

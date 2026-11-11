@@ -6,10 +6,12 @@ namespace RayTracer.Lib.Materials;
 public class EmissiveMaterial : Material
 {
     public Color Color { get; }
+    public float Intensity { get; }
 
-    public EmissiveMaterial(Color color) 
+    public EmissiveMaterial(Color color, float intensity = 1) 
     {
         Color = color;
+        Intensity = intensity;
     }
 
     public override bool Scatter(in Ray rIn, ref HitInfo hitInfo, out Vec3 attenuation, out Ray scattered)
@@ -19,5 +21,5 @@ public class EmissiveMaterial : Material
         return false;
     }
 
-    public override Color Emit() => Color;
+    public override Color Emit() => Color * Intensity;
 }

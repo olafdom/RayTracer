@@ -41,4 +41,23 @@ public readonly struct Color
     public static Color operator *(Vec3 v, Color c)  => new Color(v.X * c.R, v.Y * c.G, v.Z * c.B);
     
     public static Color operator *(Color c, Vec3 v) => new Color(c.R * v.X, c.G * v.Y, c.B * v.Z);
+
+    public (byte r, byte g, byte b) ToRgb255()
+    {
+        //Tone Mapping Reinhard Formula [0 - inf) -> [0, 1)
+        float mappedR = R / (R + 1.0f);
+        float mappedG = G / (G + 1.0f);
+        float mappedB = B / (B + 1.0f);
+        
+        //Gamma
+        float r = MathF.Sqrt(MathF.Max(0, mappedR));
+        float g = MathF.Sqrt(MathF.Max(0, mappedG));
+        float b = MathF.Sqrt(MathF.Max(0, mappedB));
+        
+        byte byteR = (byte)(Math.Clamp(r, 0.0f, 0.999f) * 256);
+        byte byteG = (byte)(Math.Clamp(g, 0.0f, 0.999f) * 256);
+        byte byteB = (byte)(Math.Clamp(b, 0.0f, 0.999f) * 256);
+
+        return (byteR, byteG, byteB);
+    }
 }
