@@ -66,7 +66,7 @@ public readonly struct Vec3
         );
     }
 
-    public bool NearZero() => Math.Abs(X) < 1E-015f && Math.Abs(X) < 1E-15f && Math.Abs(X) < 1E-15f;
+    public bool NearZero() => MathF.Abs(X) < 1E-015f && MathF.Abs(X) < 1E-15f && MathF.Abs(X) < 1E-15f;
 
     public static Vec3 RandomInUnitSphere()
     {
