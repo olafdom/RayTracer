@@ -3,7 +3,7 @@ using RayTracer.Lib.Materials;
 
 namespace RayTracer.Lib.Objects;
 
-public class Sphere : IHittable
+public readonly struct Sphere : IHittable
 {
     public Vec3 Center { get; }
     public float Radius { get; }    

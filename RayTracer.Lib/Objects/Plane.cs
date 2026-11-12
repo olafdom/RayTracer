@@ -3,7 +3,7 @@ using RayTracer.Lib.Materials;
 
 namespace RayTracer.Lib.Objects;
 
-public class Plane : IHittable
+public readonly struct Plane : IHittable
 {
     private const float Epsilon = 1e-6f;
     public Vec3 Normal { get; }
