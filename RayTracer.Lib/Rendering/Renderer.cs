@@ -35,7 +35,7 @@ public class Renderer
         if (depth <= 0)
             return new Color(0, 0, 0);
         
-        if (!world.Hit(in ray, 0.001f, float.PositiveInfinity, out HitInfo hitInfo))
+        if (!world.Hit(in ray, new (0.001f, float.PositiveInfinity), out HitInfo hitInfo))
             return new Color(0, 0, 0);
         
         Color emitted = hitInfo.Material.Emit(); 

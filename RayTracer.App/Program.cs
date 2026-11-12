@@ -21,7 +21,7 @@ class Program
         Camera cam = new Camera(new Vec3(-1.5f, 0, 2f), 90.0f, 16.0f / 9.0f)
         {
             Fov = 90.0f,
-            SamplesPerPixel = 100,
+            SamplesPerPixel = 10,
             Target = new Vec3(-0.3f, 0, -1.5f)
         };
 

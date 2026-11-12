@@ -10,15 +10,15 @@ public class Scene : IHittable
     public void RemoveObject(IHittable hittable) => Objects.Remove(hittable);
 
     //Function returning HitInfo about nearest object that was hit by a given Ray
-    public bool Hit(in Ray ray, float tMin, float tMax, out HitInfo hitInfo)
+    public bool Hit(in Ray ray, Interval tInterval, out HitInfo hitInfo)
     {
         bool hitAnything = false;
-        float closestSoFar = tMax;
+        float closestSoFar = tInterval.Max;
         hitInfo = default;
 
         foreach (var obj in Objects)
         {
-            if (obj.Hit(ray, tMin, closestSoFar, out HitInfo tempHitInfo))
+            if (obj.Hit(ray, new (tInterval.Min, closestSoFar), out HitInfo tempHitInfo))
             {
                 hitAnything = true;
                 closestSoFar = tempHitInfo.T;

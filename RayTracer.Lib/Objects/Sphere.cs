@@ -16,7 +16,7 @@ public class Sphere : IHittable
         Material = material;
     }
 
-    public bool Hit(in Ray ray, float tMin, float tMax, out HitInfo hitInfo)
+    public bool Hit(in Ray ray, Interval tInterval, out HitInfo hitInfo)
     {
         hitInfo = default;
         
@@ -36,10 +36,10 @@ public class Sphere : IHittable
         
         //Take closer root:
         float root = (-halfb - sqrtDiscriminant) / a;
-        if (root < tMin || tMax < root)
+        if (root < tInterval.Min || tInterval.Max < root)
         {
             root = (-halfb + sqrtDiscriminant) / a;
-            if (root < tMin || tMax < root)
+            if (root < tInterval.Min || tInterval.Max < root)
             {
                 return false;
             }

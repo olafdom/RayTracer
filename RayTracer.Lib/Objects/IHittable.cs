@@ -4,5 +4,5 @@ namespace RayTracer.Lib.Objects;
 
 public interface IHittable
 {
-    public bool Hit(in Ray ray, float tMin, float tMax, out HitInfo hitInfo);
+    public bool Hit(in Ray ray, Interval tInterval, out HitInfo hitInfo);
 }

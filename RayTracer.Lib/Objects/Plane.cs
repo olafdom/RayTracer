@@ -17,7 +17,7 @@ public class Plane : IHittable
         Material = material;
     }
 
-    public bool Hit(in Ray ray, float tMin, float tMax, out HitInfo hitInfo)
+    public bool Hit(in Ray ray, Interval tInterval, out HitInfo hitInfo)
     {
         hitInfo = default;
         
@@ -28,7 +28,7 @@ public class Plane : IHittable
 
         float t = Vec3.DotProduct(Position - ray.Origin, Normal) / denominator;
         
-        if (t < tMin || t > tMax) 
+        if (t < tInterval.Min || t > tInterval.Max) 
             return false;
         
         hitInfo.T = t;
