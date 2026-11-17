@@ -6,45 +6,49 @@ public class BvhTree : IHittable
 {
     private class BvhNode : IHittable
     {
-        private IHittable _left;
-        private IHittable _right;
+        private readonly IHittable _left;
+        private readonly IHittable? _right;
         public Aabb Aabb { get; }
         
         //Recursively builds a BVH Tree. Implementation guaranteeing that all leafs will be primitives
         public BvhNode(in Span<IHittable> objects)
         {
-            //both children become the same primitive
             if (objects.Length == 1)
             {
-                _left = _right = objects[0];
+                _left = objects[0];
+                _right = null;
+                Aabb = _left.Aabb;
+                return;
             }
-            //only two primitives split to children
-            else if (objects.Length == 2)
+
+            if (objects.Length == 2)
             {
                 _left = objects[0];
                 _right = objects[1];
+                Aabb = new(_left.Aabb, _right.Aabb);
+                return;
             }
-            else
+
+            Aabb bounds = Aabb.Empty;
+            foreach (IHittable obj in objects)
+                bounds = new Aabb(bounds, obj.Aabb);
+
+            int axis = bounds.LongestAxis();
+
+            Comparison<IHittable> comparator = axis switch
             {
-                //random axis which with respect to which we will sort primitives to try to cut scene in all dimensions
-                int axis = Random.Shared.Next(0, 3);
+                0 => (a, b) => a.Aabb.IntervalX.Min.CompareTo(b.Aabb.IntervalX.Min),
+                1 => (a, b) => a.Aabb.IntervalY.Min.CompareTo(b.Aabb.IntervalY.Min),
+                _ => (a, b) => a.Aabb.IntervalZ.Min.CompareTo(b.Aabb.IntervalZ.Min)
+            };
 
-                Comparison<IHittable> comparator = axis switch
-                {
-                    0 => (a, b) => a.Aabb.IntervalX.Min.CompareTo(b.Aabb.IntervalX.Min),
-                    1 => (a, b) => a.Aabb.IntervalY.Min.CompareTo(b.Aabb.IntervalY.Min),
-                    _ => (a, b) => a.Aabb.IntervalZ.Min.CompareTo(b.Aabb.IntervalZ.Min)
-                };
+            objects.Sort(comparator);
 
-                objects.Sort(comparator);
+            int mid = objects.Length / 2;
 
-                int mid = objects.Length / 2;
-
-                _left = new BvhNode(objects.Slice(0, mid));
-                _right = new BvhNode(objects.Slice(mid));
-            }
-
-            Aabb = new (_left.Aabb, _right.Aabb);
+            _left = new BvhNode(objects.Slice(0, mid));
+            _right = new BvhNode(objects.Slice(mid));
+            Aabb = new(_left.Aabb, _right.Aabb);
         }
         
         public bool Hit(in Ray ray, Interval tInterval, out HitInfo hitInfo)
@@ -55,7 +59,7 @@ public class BvhTree : IHittable
                 return false;
             
             bool hitLeft = _left.Hit(ray, tInterval, out hitInfo);
-            if (_right.Hit(ray, new (tInterval.Min, hitLeft ? hitInfo.T : tInterval.Max), out HitInfo rightHitInfo))
+            if (_right is not null && _right.Hit(ray, new (tInterval.Min, hitLeft ? hitInfo.T : tInterval.Max), out HitInfo rightHitInfo))
             {
                 hitInfo = rightHitInfo;
                 return true;

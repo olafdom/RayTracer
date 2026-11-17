@@ -8,21 +8,16 @@ public readonly struct Sphere : IHittable
     public Vec3 Center { get; }
     public float Radius { get; }    
     public Material Material { get; }
-
-    public Aabb Aabb
-    {
-        get
-        {
-            Vec3 radiusVector = new Vec3(Radius, Radius, Radius);
-            return new Aabb(Center - radiusVector, Center + radiusVector);
-        }
-    }
+    public Aabb Aabb { get; }
 
     public Sphere(Vec3 center, float radius, Material material)
     {
         Center = center;
         Radius = radius;
         Material = material;
+
+        Vec3 radiusVector = new Vec3(Radius, Radius, Radius);
+        Aabb = new Aabb(Center - radiusVector, Center + radiusVector);
     }
 
     public bool Hit(in Ray ray, Interval tInterval, out HitInfo hitInfo)
@@ -38,10 +33,10 @@ public readonly struct Sphere : IHittable
         float c = v.LengthSquared - Radius * Radius;
         
         float discriminantReduced = halfb * halfb - a * c;
-        float sqrtDiscriminant = MathF.Sqrt(discriminantReduced);
-        
         if (discriminantReduced < 0) 
             return false;
+
+        float sqrtDiscriminant = MathF.Sqrt(discriminantReduced);
         
         //Take closer root:
         float root = (-halfb - sqrtDiscriminant) / a;

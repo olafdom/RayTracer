@@ -53,6 +53,17 @@ public readonly struct Aabb
         IntervalZ = new Interval(a, b);
     }
 
+    public int LongestAxis()
+    {
+        float sizeX = IntervalX.Max - IntervalX.Min;
+        float sizeY = IntervalY.Max - IntervalY.Min;
+        float sizeZ = IntervalZ.Max - IntervalZ.Min;
+
+        if (sizeX > sizeY)
+            return sizeX > sizeZ ? 0 : 2;
+        return sizeY > sizeZ ? 1 : 2;
+    }
+
     public bool Hit(in Ray ray, Interval tInterval)
     {
         /*
