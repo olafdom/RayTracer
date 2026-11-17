@@ -5,10 +5,16 @@ namespace RayTracer.Lib.Objects;
 public readonly struct Aabb
 {
     public static readonly Aabb Empty = new(Interval.Empty, Interval.Empty, Interval.Empty);
+    public static readonly Aabb Universe = new(Interval.Universe, Interval.Universe, Interval.Universe);
 
     public Interval IntervalX { get; } = Interval.Empty;
     public Interval IntervalY { get; } = Interval.Empty;
     public Interval IntervalZ { get; } = Interval.Empty;
+
+    public bool IsUnbounded =>
+        float.IsNegativeInfinity(IntervalX.Min) || float.IsPositiveInfinity(IntervalX.Max) ||
+        float.IsNegativeInfinity(IntervalY.Min) || float.IsPositiveInfinity(IntervalY.Max) ||
+        float.IsNegativeInfinity(IntervalZ.Min) || float.IsPositiveInfinity(IntervalZ.Max);
     
     //Constructor taking only two points (two corners of a box), which is enough as it is Axis-Aligned
     public Aabb(Vec3 a, Vec3 b)

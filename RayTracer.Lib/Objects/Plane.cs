@@ -3,13 +3,13 @@ using RayTracer.Lib.Materials;
 
 namespace RayTracer.Lib.Objects;
 
-/*
 public readonly struct Plane : IHittable
 {
     private const float Epsilon = 1e-6f;
     public Vec3 Normal { get; }
     public Vec3 Position { get; }
     public Material Material { get; }
+    public Aabb Aabb => Aabb.Universe;
 
     public Plane(Vec3 position, Vec3 normal, Material material)
     {
@@ -40,4 +40,3 @@ public readonly struct Plane : IHittable
         return true;
     }
 }
-*/

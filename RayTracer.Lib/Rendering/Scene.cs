@@ -11,13 +11,29 @@ public class Scene : IHittable
     public Aabb Aabb { get; set; } = Aabb.Empty;
     
     private volatile BvhTree? _bvhTree;
+    private readonly List<IHittable> _unboundedObjects = new();
     private readonly object _bvhLock = new();
 
     private BvhTree BuildBvhTree()
     {
         lock (_bvhLock)
         {
-            return _bvhTree ??= new BvhTree(CollectionsMarshal.AsSpan(Objects));
+            if (_bvhTree != null)
+                return _bvhTree;
+
+            List<IHittable> bounded = new(Objects.Count);
+            _unboundedObjects.Clear();
+
+            foreach (IHittable obj in Objects)
+            {
+                if (obj.Aabb.IsUnbounded)
+                    _unboundedObjects.Add(obj);
+                else
+                    bounded.Add(obj);
+            }
+
+            _bvhTree = new BvhTree(CollectionsMarshal.AsSpan(bounded));
+            return _bvhTree;
         }
     }
 
@@ -45,6 +61,19 @@ public class Scene : IHittable
         }
 
         BvhTree bvh = _bvhTree ?? BuildBvhTree();
-        return bvh.Hit(ray, tInterval, out hitInfo);
+        bool hitAnything = bvh.Hit(ray, tInterval, out hitInfo);
+        float closestSoFar = hitAnything ? hitInfo.T : tInterval.Max;
+
+        foreach (IHittable obj in _unboundedObjects)
+        {
+            if (obj.Hit(ray, new Interval(tInterval.Min, closestSoFar), out HitInfo tempHitInfo))
+            {
+                hitAnything = true;
+                closestSoFar = tempHitInfo.T;
+                hitInfo = tempHitInfo;
+            }
+        }
+
+        return hitAnything;
     }
 }
