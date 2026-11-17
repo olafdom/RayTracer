@@ -18,6 +18,11 @@ public readonly struct Interval
     {
         return new Interval(MathF.Max(a.Min, b.Min), MathF.Min(a.Max, b.Max));
     }
+
+    public static Interval Enclose(Interval a, Interval b)
+    {
+        return new Interval(MathF.Min(a.Min, b.Min), MathF.Max(a.Max, b.Max));
+    }
     
     public Interval Intersect(float min, float max)
     {

@@ -1,4 +1,5 @@
-﻿using RayTracer.Lib.Core;
+﻿using System.Runtime.InteropServices;
+using RayTracer.Lib.Core;
 using RayTracer.Lib.Objects;
 
 namespace RayTracer.Lib.Rendering;
@@ -6,26 +7,44 @@ namespace RayTracer.Lib.Rendering;
 public class Scene : IHittable
 {
     public List<IHittable> Objects { get; } = new();
-    public void AddObject(IHittable hittable) => Objects.Add(hittable);
-    public void RemoveObject(IHittable hittable) => Objects.Remove(hittable);
+    
+    public Aabb Aabb { get; set; } = Aabb.Empty;
+    
+    private volatile BvhTree? _bvhTree;
+    private readonly object _bvhLock = new();
+
+    private BvhTree BuildBvhTree()
+    {
+        lock (_bvhLock)
+        {
+            return _bvhTree ??= new BvhTree(CollectionsMarshal.AsSpan(Objects));
+        }
+    }
+
+    public void AddObject(IHittable hittable)
+    {
+        Objects.Add(hittable);
+        Aabb = new Aabb(Aabb, hittable.Aabb);
+        _bvhTree = null;
+    }
+
+    public void RemoveObject(IHittable hittable)
+    {
+        Objects.Remove(hittable);
+        _bvhTree = null;
+    }
+    
 
     //Function returning HitInfo about nearest object that was hit by a given Ray
     public bool Hit(in Ray ray, Interval tInterval, out HitInfo hitInfo)
     {
-        bool hitAnything = false;
-        float closestSoFar = tInterval.Max;
-        hitInfo = default;
-
-        foreach (var obj in Objects)
+        if (Objects.Count == 0)
         {
-            if (obj.Hit(ray, new (tInterval.Min, closestSoFar), out HitInfo tempHitInfo))
-            {
-                hitAnything = true;
-                closestSoFar = tempHitInfo.T;
-                hitInfo = tempHitInfo;
-            }
+            hitInfo = default;
+            return false;
         }
 
-        return hitAnything;
+        BvhTree bvh = _bvhTree ?? BuildBvhTree();
+        return bvh.Hit(ray, tInterval, out hitInfo);
     }
 }

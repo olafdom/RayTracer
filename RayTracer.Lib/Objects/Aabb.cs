@@ -2,27 +2,45 @@
 
 namespace RayTracer.Lib.Objects;
 
-public readonly struct AABB
+public readonly struct Aabb
 {
-    public Interval IntervalX { get; }
-    public Interval IntervalY { get; }
-    public Interval IntervalZ { get; }
+    public static readonly Aabb Empty = new(Interval.Empty, Interval.Empty, Interval.Empty);
 
-    public AABB(Interval x, Interval y, Interval z)
+    public Interval IntervalX { get; } = Interval.Empty;
+    public Interval IntervalY { get; } = Interval.Empty;
+    public Interval IntervalZ { get; } = Interval.Empty;
+    
+    //Constructor taking only two points (two corners of a box), which is enough as it is Axis-Aligned
+    public Aabb(Vec3 a, Vec3 b)
+    {
+        IntervalX = new Interval(MathF.Min(a.X, b.X), MathF.Max(a.X, b.X));
+        IntervalY = new Interval(MathF.Min(a.Y, b.Y), MathF.Max(a.Y, b.Y));
+        IntervalZ = new Interval(MathF.Min(a.Z, b.Z), MathF.Max(a.Z, b.Z));
+    }
+    
+    //Constructor making a box covering two boxes
+    public Aabb(Aabb a, Aabb b)
+    {
+        IntervalX = Interval.Enclose(a.IntervalX, b.IntervalX);
+        IntervalY = Interval.Enclose(a.IntervalY, b.IntervalY);
+        IntervalZ = Interval.Enclose(a.IntervalZ, b.IntervalZ);
+    }
+
+    public Aabb(Interval x, Interval y, Interval z)
     {
         IntervalX = x;
         IntervalY = y;
         IntervalZ = z;
     }
     
-    public AABB(AABB other)
+    public Aabb(Aabb other)
     {
         IntervalX = other.IntervalX;
         IntervalY = other.IntervalY;
         IntervalZ = other.IntervalZ;
     }
 
-    public AABB(float a, float b)
+    public Aabb(float a, float b)
     {
         IntervalX = new Interval(a, b);
         IntervalY = new Interval(a, b);

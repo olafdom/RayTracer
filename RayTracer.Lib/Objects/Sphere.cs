@@ -9,6 +9,15 @@ public readonly struct Sphere : IHittable
     public float Radius { get; }    
     public Material Material { get; }
 
+    public Aabb Aabb
+    {
+        get
+        {
+            Vec3 radiusVector = new Vec3(Radius, Radius, Radius);
+            return new Aabb(Center - radiusVector, Center + radiusVector);
+        }
+    }
+
     public Sphere(Vec3 center, float radius, Material material)
     {
         Center = center;
